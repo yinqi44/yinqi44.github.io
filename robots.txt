@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 内部工具页不参与收录
+Disallow: /tools/
+
+# 站点地图
+Sitemap: https://yinqi44.github.io/sitemap.xml

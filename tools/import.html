@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>网址导入工具</title>
+<style>
+  :root { --bg:#fbfbfa; --card:#fff; --text:#1a1a1a; --text-2:#5f5f5c;
+          --line:#e6e6e2; --accent:#2f6d5b; --accent-soft:#e8f0ed; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:900px; margin:0 auto; padding:40px 24px 60px; }
+  h1 { font-size:24px; margin:0 0 6px; }
+  .sub { color:var(--text-2); font-size:14px; margin-bottom:28px; }
+  h2 { font-size:15px; margin:26px 0 10px; }
+  textarea { width:100%; min-height:170px; padding:12px 14px; font:13px/1.6 ui-monospace,Consolas,monospace;
+    border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--text);
+    resize:vertical; outline:none; }
+  textarea:focus { border-color:var(--accent); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+  button { padding:10px 18px; border-radius:100px; border:1px solid var(--line);
+    background:var(--card); color:var(--text); font-size:14px; cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:hover { opacity:.9; }
+  .tip { font-size:13px; color:var(--text-2); background:var(--accent-soft);
+    padding:10px 14px; border-radius:10px; margin-top:10px; }
+  .tip code { font-size:12.5px; }
+  input[type=file] { font-size:13.5px; }
+  .hint { font-size:13px; color:var(--text-2); margin-top:6px; }
+  hr { border:none; border-top:1px solid var(--line); margin:30px 0; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>网址导入工具</h1>
+  <p class="sub">把网址粘进来 → 一键生成数据文件 → 覆盖 <code>assets/js/links.js</code>，网站立刻更新。</p>
+
+  <h2>方式一：粘贴网址清单</h2>
+  <textarea id="raw" placeholder="每行一个网址，可写成「名称 网址」或直接贴网址&#10;&#10;空行或者单独一行不带网址的文字，会被当作分类名&#10;&#10;示例：&#10;搜索引擎&#10;Google https://www.google.com&#10;https://www.bing.com&#10;&#10;AI 工具&#10;https://chat.deepseek.com"></textarea>
+  <div class="row">
+    <button class="primary" id="btnText">解析文本 →</button>
+    <span class="hint">识别 <code>名称 网址</code>、<code>网址</code>、<code>名称|网址|说明</code></span>
+  </div>
+
+  <hr>
+
+  <h2>方式二：导入浏览器书签文件</h2>
+  <div class="row">
+    <input type="file" id="file" accept=".html,.htm">
+    <button id="btnFile">解析书签文件 →</button>
+  </div>
+  <div class="tip">
+    导出方法：<b>Chrome / Edge</b>：书签管理器 → 右上角 ⋮ → 导出书签，得到一个 <code>bookmarks_xxx.html</code> 文件。
+    <b>Firefox</b>：书签 → 显示所有书签 → 导入和备份 → 导出书签为 HTML。
+    文件夹会自动变成网站里的分类。
+  </div>
+
+  <hr>
+
+  <h2>生成结果</h2>
+  <textarea id="out" placeholder="点上面的按钮后，这里会生成完整文件内容"></textarea>
+  <div class="row">
+    <button class="primary" id="copy">复制</button>
+    <button id="download">下载 links.js</button>
+    <label><input type="checkbox" id="merge" checked> 保留原有分类</label>
+    <span class="hint" id="stat"></span>
+  </div>
+  <div class="tip">
+    复制后覆盖仓库里的 <code>assets/js/links.js</code>，推送到 GitHub 即可生效。
+  </div>
+</div>
+
+<script src="../assets/js/links.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var current = window.SITE_DATA || { owner: {}, categories: [] };
+
+  function hostOf(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; } }
+  function esc(s) { return String(s == null ? '' : s); }
+
+  /* ---- 文本解析：不含网址的独立行 = 分类名 ---- */
+  function parseText(text) {
+    var cats = [];
+    var cur = null;
+    text.split(/\r?\n/).forEach(function (line) {
+      line = line.trim(); if (!line) return;
+      var m = line.match(/https?:\/\/[^\s"'<>），),|]+/);
+      if (!m) {
+        if (line.length <= 30) { cur = { name: line, links: [] }; cats.push(cur); }
+        return;
+      }
+      var url = m[0];
+      var rest = (line.slice(0, m.index) + ' ' + line.slice(m.index + url.length)).trim();
+      var name = '', desc = '';
+      var parts = rest.split(/\s*[|｜]\s*/);
+      if (parts.length >= 2) { name = parts[0]; desc = parts[1]; }
+      else { name = rest; }
+      name = name.trim();
+      if (!name) name = hostOf(url) || url;
+      if (name.length > 40) name = name.slice(0, 40);
+      if (!cur) { cur = { name: '常用网址', links: [] }; cats.push(cur); }
+      if (cur.links.some(function (l) { return l.url === url; })) return;
+      cur.links.push({ name: name, url: url, desc: desc });
+    });
+    return cats.filter(function (c) { return c.links.length; });
+  }
+
+  /* ---- 书签 HTML 解析：文件夹 = 分类 ---- */
+  var SKIP = { '书签栏': 1, '其他书签': 1, '移动设备书签': 1, 'bookmarks bar': 1,
+               'other bookmarks': 1, 'mobile bookmarks': 1, 'bookmarks menu': 1 };
+
+  function parseBookmarks(doc) {
+    var cats = [];
+    function walk(dl, prefix) {
+      var kids = Array.prototype.slice.call(dl.children);
+      for (var i = 0; i < kids.length; i++) {
+        var el = kids[i]; if (el.tagName !== 'DT') continue;
+        var h3 = el.querySelector('h3');
+        var a = el.querySelector('a');
+        if (h3) {
+          var folder = h3.textContent.trim();
+          var sub = el.querySelector('dl') ||
+            (el.nextElementSibling && el.nextElementSibling.tagName === 'DL' ? el.nextElementSibling : null);
+          if (sub) {
+            var path = SKIP[folder.toLowerCase()] ? prefix
+              : (prefix ? prefix + ' / ' + folder : folder);
+            walk(sub, path);
+          }
+        } else if (a && /^https?:/i.test(a.getAttribute('href') || '')) {
+          var label = (path_name(prefix) || '未分类');
+          var cat = find(label);
+          var url = a.getAttribute('href');
+          if (!cat.links.some(function (l) { return l.url === url; })) {
+            cat.links.push({ name: (a.textContent || hostOf(url)).trim().slice(0, 40), url: url, desc: '' });
+          }
+        }
+      }
+    }
+    function path_name(prefix) { return prefix; }
+    function find(name) {
+      for (var i = 0; i < cats.length; i++) if (cats[i].name === name) return cats[i];
+      var c = { name: name, links: [] }; cats.push(c); return c;
+    }
+    var roots = doc.querySelectorAll('dl');
+    for (var i = 0; i < roots.length; i++) {
+      var parent = roots[i].parentElement;
+      if (parent && parent.closest('dl')) continue; // 只处理最外层
+      walk(roots[i], '');
+      break;
+    }
+    return cats.filter(function (c) { return c.links.length; });
+  }
+
+  /* ---- 生成文件 ---- */
+  function generate(newCats) {
+    var cats = newCats;
+    if ($('merge').checked) {
+      var merged = [].concat(current.categories || []);
+      newCats.forEach(function (nc) {
+        var exist = null;
+        for (var i = 0; i < merged.length; i++) if (merged[i].name === nc.name) exist = merged[i];
+        if (!exist) { exist = { name: nc.name, links: [] }; merged.push(exist); }
+        nc.links.forEach(function (l) {
+          if (!exist.links.some(function (x) { return x.url === l.url; })) exist.links.push(l);
+        });
+      });
+      cats = merged;
+    }
+    var o = current.owner || {};
+    var total = cats.reduce(function (n, c) { return n + c.links.length; }, 0);
+
+    var s = '';
+    s += '/* 站点数据 —— 只改这一个文件（由导入工具生成） */\n';
+    s += 'window.SITE_DATA = {\n';
+    s += '  owner: {\n';
+    s += "    nickname: " + q(o.nickname, '大王') + ",\n";
+    s += "    role: " + q(o.role, '个人主页 · 网址导航') + ",\n";
+    s += "    intro: " + q(o.intro, '') + ",\n";
+    s += "    city: " + q(o.city, '') + ",\n";
+    s += "    aboutText: " + q(o.aboutText, '') + ",\n";
+    s += "    skills: [" + (o.skills || []).map(function (x) { return q(x, ''); }).join(', ') + "],\n";
+    s += "    contacts: [\n";
+    (o.contacts || []).forEach(function (c, i) {
+      s += "      { label: " + q(c.label, '') + ", value: " + q(c.value, '') +
+           ", url: " + q(c.url, '') + ", icon: " + q(c.icon, '') + " }" +
+           (i < o.contacts.length - 1 ? ',' : '') + "\n";
+    });
+    s += "    ]\n";
+    s += "  },\n\n  categories: [\n";
+    cats.forEach(function (c, i) {
+      s += "    {\n      name: " + q(c.name, '') + ",\n      links: [\n";
+      c.links.forEach(function (l, j) {
+        s += "        { name: " + q(l.name, '') + ", url: " + q(l.url, '') +
+             (l.desc ? ", desc: " + q(l.desc, '') : '') + " }" +
+             (j < c.links.length - 1 ? ',' : '') + "\n";
+      });
+      s += "      ]\n    }" + (i < cats.length - 1 ? ',' : '') + "\n";
+    });
+    s += "  ]\n};\n";
+
+    $('out').value = s;
+    $('stat').textContent = cats.length + ' 个分类 / ' + total + ' 个网址';
+  }
+
+  function q(v, dflt) {
+    var s = v == null || v === '' ? (dflt || '') : v;
+    return JSON.stringify(String(s));
+  }
+
+  $('btnText').addEventListener('click', function () {
+    var cats = parseText($('raw').value);
+    if (!cats.length) { alert('没解析到网址，检查一下内容里有没有带 http 的链接'); return; }
+    generate(cats);
+  });
+
+  $('btnFile').addEventListener('click', function () {
+    var f = $('file').files[0];
+    if (!f) { alert('先选择一个书签 HTML 文件'); return; }
+    var r = new FileReader();
+    r.onload = function () {
+      var doc = new DOMParser().parseFromString(r.result, 'text/html');
+      var cats = parseBookmarks(doc);
+      if (!cats.length) { alert('没解析到网址，确认导出的是标准书签 HTML 文件'); return; }
+      generate(cats);
+    };
+    r.readAsText(f, 'utf-8');
+  });
+
+  $('copy').addEventListener('click', function () {
+    if (!$('out').value) return;
+    $('out').select();
+    document.execCommand('copy');
+    alert('已复制，覆盖到 assets/js/links.js 即可');
+  });
+
+  $('download').addEventListener('click', function () {
+    if (!$('out').value) return;
+    var blob = new Blob([$('out').value], { type: 'text/javascript' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'links.js';
+    a.click();
+  });
+})();
+</script>
+</body>
+</html>
