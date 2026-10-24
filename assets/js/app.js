@@ -107,7 +107,8 @@
   $('#year').textContent = new Date().getFullYear();
 
   /* ============ 分类筛选 ============ */
-  var activeCat = '全部';
+  /* 默认选中「全部」，但值必须跟当前语言的词典一致，否则英文模式下会筛不出任何卡片 */
+  var activeCat = L('cat_all');
   var keyword = '';
   var chipsBox = $('#catChips');
 
@@ -144,7 +145,7 @@
 
   function match(l) {
     if (keyword) {
-      var hay = (l.name + ' ' + l.url + ' ' + (l.desc || '') + ' ' + hostOf(l.url)).toLowerCase();
+      var hay = (t(l.name) + ' ' + l.url + ' ' + (t(l.desc) || '') + ' ' + hostOf(l.url)).toLowerCase();
       if (hay.indexOf(keyword) === -1) return false;
     }
     if (activeCat !== L('cat_all')) {
@@ -166,7 +167,9 @@
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
 
-      var letter = (l.name || '?').trim().charAt(0).toUpperCase();
+      /* 名字可能是 {zh,en} 对象（双语站点名），必须先 t() 转成字符串 */
+      var nameStr = String(t(l.name) || '?');
+      var letter = nameStr.trim().charAt(0).toUpperCase();
       var ico = document.createElement('span');
       ico.className = 'card-ico';
 
@@ -204,7 +207,7 @@
       var body = document.createElement('span');
       body.className = 'card-body';
       body.innerHTML =
-        '<span class="card-name">' + esc(l.name) + '</span>' +
+        '<span class="card-name">' + esc(nameStr) + '</span>' +
         (desc ? '<span class="card-desc">' + esc(desc) + '</span>' : '') +
         '<span class="card-url">' + esc(hostOf(l.url)) + '</span>';
 
