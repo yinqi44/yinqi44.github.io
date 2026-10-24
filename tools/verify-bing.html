@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Bing 验证一键助手</title>
+<style>
+  :root { --bg:#fbfbfa; --card:#fff; --text:#1a1a1a; --text-2:#5f5f5c; --line:#e6e6e2;
+          --accent:#2f6d5b; --accent-soft:#e8f0ed; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:44px 24px 64px; }
+  h1 { font-size:23px; margin:0 0 8px; }
+  .sub { color:var(--text-2); font-size:14px; margin-bottom:8px; }
+  label { display:block; font-size:14px; font-weight:600; margin:22px 0 8px; }
+  textarea { width:100%; min-height:120px; padding:12px 14px;
+    font:13px/1.6 ui-monospace,Consolas,monospace; border:1px solid var(--line);
+    border-radius:10px; background:var(--card); color:var(--text); resize:vertical; outline:none; }
+  textarea:focus { border-color:var(--accent); }
+  input { width:100%; padding:12px 14px; font:14px/1.5 ui-monospace,Consolas,monospace;
+    border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--text); outline:none; }
+  input:focus { border-color:var(--accent); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+  button { padding:11px 20px; border-radius:100px; border:1px solid var(--line);
+    background:var(--card); color:var(--text); font-size:14px; cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .preview { margin-top:14px; padding:14px 16px; border:1px solid var(--line); border-radius:10px;
+    background:var(--card); font:13px/1.7 ui-monospace,Consolas,monospace; color:var(--text-2);
+    white-space:pre-wrap; word-break:break-all; }
+  .tip { font-size:13.5px; color:var(--text-2); background:var(--accent-soft);
+    padding:12px 16px; border-radius:10px; margin-top:18px; line-height:1.75; }
+  ol { padding-left:20px; margin:8px 0 0; }
+  li { margin:4px 0; }
+  code { font-size:13px; background:var(--accent-soft); padding:1px 5px; border-radius:4px; }
+  .ok { border-left:4px solid var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Bing 验证一键助手</h1>
+  <p class="sub">把 Bing 给的验证内容粘进来，点一下就跳到已经填好的 GitHub 页面，你只要点 Commit。</p>
+
+  <label for="xml">Bing 给你的验证内容</label>
+  <textarea id="xml" placeholder="把下载来的 BingSiteAuth.xml 内容整段粘进来，例如：
+
+<?xml version=&quot;1.0&quot;?>
+<users>
+  <user>这里是一串字符</user>
+</users>
+
+也可以只粘中间那串字符，我帮你补全格式"></textarea>
+  <div class="row">
+    <button class="primary" id="open">打开已填好的 GitHub 页面</button>
+    <button id="copy">复制文件内容</button>
+  </div>
+
+  <div class="preview ok" id="preview">粘贴后这里会显示将要创建的文件名和内容</div>
+
+  <div class="tip">
+    <b>操作步骤</b>
+    <ol>
+      <li>在 Bing 站长平台验证方式里选 <b>XML 文件</b>，下载 <code>BingSiteAuth.xml</code>，用记事本打开，把内容整段复制</li>
+      <li>粘到上面输入框 → 点绿色按钮 → 会打开 GitHub 新建文件页，文件名和内容已经填好</li>
+      <li>拉到页面最下方点 <code>Commit changes</code></li>
+      <li>等 1 分钟，回 Bing 点 <b>VERIFY</b></li>
+      <li>验证通过后，左侧菜单 <b>Sitemaps</b> → 提交 <code>sitemap.xml</code></li>
+      <li>自查：浏览器打开 <code>https://yinqi44.github.io/BingSiteAuth.xml</code>，能看到 XML 内容就说明放对了</li>
+    </ol>
+  </div>
+
+  <div class="tip">
+    <b>另一种更省事的方式</b>：Bing 验证选项里也能选 <b>Meta 标签</b>，它会给你一行
+    <code>&lt;meta name="msvalidate.01" content="..."&gt;</code>。把那行发给我，我告诉你要粘到 index.html 的哪个位置。
+  </div>
+</div>
+
+<script>
+(function () {
+  var target = 'https://github.com/yinqi44/yinqi44.github.io/new/main';
+  var input = document.getElementById('xml');
+  var preview = document.getElementById('preview');
+
+  function body() {
+    var v = input.value.trim();
+    if (!v) return '';
+    if (v.indexOf('<') === -1) {
+      return '<?xml version="1.0"?>\n<users>\n  <user>' + v + '</user>\n</users>';
+    }
+    return v;
+  }
+
+  function refresh() {
+    var b = body();
+    preview.textContent = b
+      ? '文件名：BingSiteAuth.xml\n\n内容：\n' + b
+      : '粘贴后这里会显示将要创建的文件名和内容';
+  }
+
+  input.addEventListener('input', refresh);
+
+  document.getElementById('open').addEventListener('click', function () {
+    var b = body();
+    if (!b) { alert('先把 Bing 给的验证内容粘进来'); return; }
+    var url = target + '?filename=' + encodeURIComponent('BingSiteAuth.xml') +
+              '&value=' + encodeURIComponent(b);
+    window.open(url, '_blank');
+  });
+
+  document.getElementById('copy').addEventListener('click', function () {
+    var b = body();
+    if (!b) { alert('先粘贴内容'); return; }
+    navigator.clipboard.writeText(b).then(function () { alert('已复制'); });
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>

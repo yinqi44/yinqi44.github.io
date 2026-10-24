@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Google 验证一键助手</title>
+<style>
+  :root { --bg:#fbfbfa; --card:#fff; --text:#1a1a1a; --text-2:#5f5f5c; --line:#e6e6e2;
+          --accent:#2f6d5b; --accent-soft:#e8f0ed; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+    font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:44px 24px 64px; }
+  h1 { font-size:23px; margin:0 0 8px; }
+  .sub { color:var(--text-2); font-size:14px; margin-bottom:26px; }
+  label { display:block; font-size:14px; font-weight:600; margin:22px 0 8px; }
+  input { width:100%; padding:12px 14px; font:14px/1.5 ui-monospace,Consolas,monospace;
+    border:1px solid var(--line); border-radius:10px; background:var(--card); color:var(--text); outline:none; }
+  input:focus { border-color:var(--accent); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; align-items:center; }
+  button, .btn { display:inline-flex; align-items:center; padding:11px 20px; border-radius:100px;
+    border:1px solid var(--line); background:var(--card); color:var(--text); font-size:14px;
+    cursor:pointer; text-decoration:none; }
+  button.primary, .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn[disabled] { opacity:.45; pointer-events:none; }
+  .preview { margin-top:14px; padding:14px 16px; border:1px solid var(--line); border-radius:10px;
+    background:var(--card); font:13px/1.6 ui-monospace,Consolas,monospace; color:var(--text-2);
+    word-break:break-all; }
+  .tip { font-size:13.5px; color:var(--text-2); background:var(--accent-soft);
+    padding:12px 16px; border-radius:10px; margin-top:18px; line-height:1.75; }
+  ol { padding-left:20px; margin:8px 0 0; }
+  li { margin:4px 0; }
+  code { font-size:13px; background:var(--accent-soft); padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Google 验证一键助手</h1>
+  <p class="sub">填好文件名，点一下就跳到已经填完内容的 GitHub 页面，你只要点 Commit。</p>
+
+  <label for="fname">Google 给你的验证文件名</label>
+  <input id="fname" placeholder="例如 google1a2b3c4d5e6f7890.html" autocomplete="off">
+  <div class="row">
+    <button class="primary" id="open">打开已填好的 GitHub 页面</button>
+    <button id="copy">复制文件内容</button>
+  </div>
+
+  <div class="preview" id="preview">文件名填好后，这里会显示将要创建的文件名和内容</div>
+
+  <div class="tip">
+    <b>下一步</b>
+    <ol>
+      <li>点上面那个绿色按钮，会打开 GitHub 新建文件页，文件名和内容已经自动填好</li>
+      <li>拉到页面最下方，点 <code>Commit changes</code>（不用改别的）</li>
+      <li>等 1 分钟，回 Google Search Console 点「验证」</li>
+      <li>想先自查：浏览器打开 <code>https://yinqi44.github.io/你的文件名.html</code>，能看到一行字就说明放对了</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+(function () {
+  var repo = 'https://github.com/yinqi44/yinqi44.github.io/new/main';
+  var input = document.getElementById('fname');
+  var preview = document.getElementById('preview');
+  var openBtn = document.getElementById('open');
+  var copyBtn = document.getElementById('copy');
+
+  function fileName() { return input.value.trim(); }
+  function fileBody() { return 'google-site-verification: ' + fileName(); }
+
+  function refresh() {
+    var n = fileName();
+    if (!n) {
+      preview.textContent = '文件名填好后，这里会显示将要创建的文件名和内容';
+      return;
+    }
+    preview.textContent = '文件名：' + n + '\n内容：' + fileBody();
+  }
+
+  input.addEventListener('input', refresh);
+
+  openBtn.addEventListener('click', function () {
+    var n = fileName();
+    if (!n) { alert('先填文件名'); return; }
+    if (!/\.html$/i.test(n)) { alert('文件名应该以 .html 结尾，检查一下有没有粘贴全'); return; }
+    var url = repo + '?filename=' + encodeURIComponent(n) + '&value=' + encodeURIComponent(fileBody());
+    window.open(url, '_blank');
+  });
+
+  copyBtn.addEventListener('click', function () {
+    var n = fileName();
+    if (!n) { alert('先填文件名'); return; }
+    navigator.clipboard.writeText(fileBody()).then(function () {
+      alert('已复制：' + fileBody());
+    }, function () { alert('复制失败，手动选中下面的内容复制'); });
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>
