@@ -3,23 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>大王 · 个人主页 | 常用网址导航</title>
+<title>深渊王座 · 个人主页 | 常用网址导航</title>
 
-<!-- ===== SEO 核心：改成你自己的信息 ===== -->
-<meta name="description" content="大王的个人主页，收录日常高频使用的网址导航、工具清单与常用站点，一键直达。">
-<meta name="keywords" content="大王,个人主页,个人网站,网址导航,常用网址,工具导航,书签导航">
-<meta name="author" content="大王">
+<!-- ===== SEO 核心 ===== -->
+<meta name="description" content="深渊王座（Abyss Throne）个人主页，收录日常高频使用的网址导航、工具清单与常用站点，一键直达。">
+<meta name="keywords" content="深渊王座,Abyss Throne,个人主页,个人网站,网址导航,常用网址,工具导航,书签导航">
+<meta name="author" content="深渊王座">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://yinqi44.github.io/">
 <!-- ===== /SEO 核心 ===== -->
 
 <!-- 社交媒体分享卡片 -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="大王 · 个人主页 | 常用网址导航">
+<meta property="og:title" content="深渊王座 · 个人主页 | 常用网址导航">
 <meta property="og:description" content="收录日常高频使用的网址导航、工具清单与常用站点，一键直达。">
 <meta property="og:url" content="https://yinqi44.github.io/">
-<meta property="og:site_name" content="大王的个人主页">
+<meta property="og:site_name" content="深渊王座 Abyss Throne">
 <meta name="twitter:card" content="summary">
+
+<!-- 中英双语言版本标注，利于搜索引擎收录 -->
+<link rel="alternate" hreflang="zh-CN" href="https://yinqi44.github.io/?lang=zh">
+<link rel="alternate" hreflang="en" href="https://yinqi44.github.io/?lang=en">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
 <link rel="stylesheet" href="assets/css/style.css">
@@ -29,7 +33,8 @@
 {
   "@context": "https://schema.org",
   "@type": "Person",
-  "name": "大王",
+  "name": "深渊王座",
+  "alternateName": "Abyss Throne",
   "url": "https://yinqi44.github.io/",
   "description": "个人主页，收录日常高频使用的网址导航与工具清单。"
 }
@@ -42,14 +47,17 @@
   <div class="wrap header-inner">
     <a class="brand" href="#top">
       <span class="brand-dot"></span>
-      <span class="brand-name" data-site="nickname">大王</span>
+      <span class="brand-name" data-site="nickname">深渊王座</span>
     </a>
     <nav class="nav">
-      <a href="#links">网址导航</a>
-      <a href="#about">关于我</a>
-      <a href="#contact">联系</a>
+      <a href="#links" data-i18n="nav_links">网址导航</a>
+      <a href="#about" data-i18n="nav_about">关于我</a>
+      <a href="#contact" data-i18n="nav_contact">联系</a>
     </nav>
-    <button class="theme-btn" id="themeBtn" type="button" aria-label="切换深浅色">
+    <button class="lang-btn" id="langBtn" type="button" data-i18n-aria="lang_label" aria-label="切换中文 / English">
+      <span id="langTag">EN</span>
+    </button>
+    <button class="theme-btn" id="themeBtn" type="button" data-i18n-aria="aria_theme" aria-label="切换深浅色">
       <span class="theme-ico">☀︎</span>
     </button>
   </div>
@@ -60,21 +68,16 @@
   <section class="hero">
     <div class="wrap">
       <p class="hero-tag" data-site="role">个人主页 · 网址导航</p>
-      <h1 class="hero-title">
-        你好，我是 <span data-site="nickname">大王</span><br>
-        这里放着我的<span class="hl">常用网站</span>清单
-      </h1>
-      <p class="hero-desc" data-site="intro">
-        把每天都要打开的站点收在一处，搜索即用，告别翻书签和历史记录。
-      </p>
+      <h1 class="hero-title" data-i18n="hero_title">你好，这里是 <span class="hl-name">深渊王座</span><br>收藏着我的<span class="hl">常用网站</span>清单</h1>
+      <p class="hero-desc" data-site="intro"></p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#links">浏览网址库</a>
-        <a class="btn" href="#contact">联系我</a>
+        <a class="btn btn-primary" href="#links" data-i18n="hero_browse">浏览网址库</a>
+        <a class="btn" href="#contact" data-i18n="hero_contact">联系我</a>
       </div>
       <p class="hero-meta">
         <span>🌏 <span data-site="city">上海</span></span>
-        <span>🔗 共 <b id="totalCount">0</b> 个站点</span>
-        <span>📂 <b id="totalCats">0</b> 个分类</span>
+        <span>🔗 <b id="totalCount">0</b> <span data-i18n="unit_sites">个站点</span></span>
+        <span>📂 <b id="totalCats">0</b> <span data-i18n="unit_cats">个分类</span></span>
       </p>
     </div>
   </section>
@@ -83,15 +86,18 @@
   <section class="section" id="links">
     <div class="wrap">
       <div class="sec-head">
-        <h2>常用网址</h2>
-        <p>输入关键词即时检索，按 <kbd>/</kbd> 快速聚焦搜索框</p>
+        <h2 data-i18n="sec_links">常用网址</h2>
+        <p data-i18n="sec_links_sub"></p>
       </div>
 
       <div class="toolbar">
         <div class="search-box">
           <span class="search-ico">🔍</span>
-          <input id="searchInput" type="search" placeholder="搜索站点名、域名或用途…" autocomplete="off">
-          <button class="clear-btn" id="clearBtn" type="button" hidden aria-label="清空">✕</button>
+          <input id="searchInput" type="search" autocomplete="off"
+                 data-i18n-ph="search_ph" data-i18n-aria="aria_search"
+                 placeholder="搜索站点名、域名或用途…" aria-label="搜索站点">
+          <button class="clear-btn" id="clearBtn" type="button" hidden
+                  data-i18n-aria="aria_clear" aria-label="清空">✕</button>
         </div>
       </div>
 
@@ -101,8 +107,9 @@
 
       <div class="empty" id="emptyState" hidden>
         <p class="empty-ico">🗂️</p>
-        <p>没找到匹配的站点</p>
-        <button class="btn btn-sm" id="resetBtn" type="button">清空筛选</button>
+        <p data-i18n="empty_title">没找到匹配的站点</p>
+        <button class="btn btn-sm" id="resetBtn" type="button"
+                data-i18n="empty_reset" data-i18n-aria="aria_reset">清空筛选</button>
       </div>
     </div>
   </section>
@@ -111,17 +118,15 @@
   <section class="section section-soft" id="about">
     <div class="wrap">
       <div class="sec-head">
-        <h2>关于我</h2>
+        <h2 data-i18n="sec_about">关于我</h2>
       </div>
       <div class="about-grid">
         <div class="about-card">
-          <h3>我是谁</h3>
-          <p data-site="aboutText">
-            这里是自我介绍，替换成你的内容：做什么工作、擅长什么、平时关注什么方向。
-          </p>
+          <h3 data-i18n="about_who">我是谁</h3>
+          <p data-site="aboutText"></p>
         </div>
         <div class="about-card">
-          <h3>我在用的工具</h3>
+          <h3 data-i18n="about_tools">我在用的工具</h3>
           <ul class="tag-list" id="skillTags"></ul>
         </div>
       </div>
@@ -132,8 +137,8 @@
   <section class="section" id="contact">
     <div class="wrap">
       <div class="sec-head">
-        <h2>联系我</h2>
-        <p>欢迎交流，看到就会回</p>
+        <h2 data-i18n="sec_contact">联系我</h2>
+        <p data-i18n="sec_contact_sub">欢迎交流，看到就会回</p>
       </div>
       <div class="contact-row" id="contactRow"></div>
     </div>
@@ -142,15 +147,15 @@
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <p>© <span id="year">2026</span> <span data-site="nickname">大王</span> · 用 GitHub Pages 免费托管</p>
+    <p>© <span id="year">2026</span> <span data-site="nickname">深渊王座</span> · <span data-i18n="footer_host">用 GitHub Pages 免费托管</span></p>
     <p class="footer-links">
-      <a href="#links">网址导航</a>
-      <a href="#top">回到顶部</a>
+      <a href="#links" data-i18n="footer_links">网址导航</a>
+      <a href="#top" data-i18n="footer_top">回到顶部</a>
     </p>
   </div>
 </footer>
 
-<button class="to-top" id="toTop" type="button" aria-label="回到顶部">↑</button>
+<button class="to-top" id="toTop" type="button" data-i18n-aria="aria_top" aria-label="回到顶部">↑</button>
 
 <script src="assets/js/links.js"></script>
 <script src="assets/js/app.js"></script>
