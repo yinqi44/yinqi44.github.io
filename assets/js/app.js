@@ -137,6 +137,10 @@
   function hostOf(url) {
     try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
   }
+  /* 带端口的站点（如 https://x.com:23456/）取图标必须带上端口 */
+  function originOf(url) {
+    try { return new URL(url).origin; } catch (e) { return ''; }
+  }
 
   function match(l) {
     if (keyword) {
@@ -177,7 +181,7 @@
       var srcs = [
         'https://icon.horse/icon/' + host,
         'https://favicon.cccyun.cc/' + host,
-        'https://' + host + '/favicon.ico'
+        originOf(l.url) + '/favicon.ico'
       ];
       var img = document.createElement('img');
       img.alt = '';

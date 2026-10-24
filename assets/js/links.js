@@ -67,7 +67,8 @@ window.SITE_DATA = {
         { name: '豆包', url: 'https://www.doubao.com', desc: { zh: 'AI 对话助手', en: 'AI chat assistant' } },
         { name: '即梦 AI', url: 'https://jimeng.jianying.com', desc: { zh: 'AI 图片 / 视频生成', en: 'AI image & video generation' } },
         { name: 'LibTV', url: 'https://www.liblib.tv', desc: { zh: 'AI 视频创作平台', en: 'AI video creation platform' } },
-        { name: 'MOKE AIGC', url: 'https://www.mokeaigc.ai/skill.html', desc: { zh: 'AI Skill 市场 / 世界观构建', en: 'AI skill marketplace & world-building' } }
+        { name: 'MOKE AIGC', url: 'https://www.mokeaigc.ai/skill.html', desc: { zh: 'AI Skill 市场 / 世界观构建', en: 'AI skill marketplace & world-building' } },
+        { name: { zh: '阿狸画布', en: 'Ali Canvas' }, url: 'https://ai.alisama.top:23456/', desc: { zh: '在线画布', en: 'Online canvas' } }
       ]
     },
     {
