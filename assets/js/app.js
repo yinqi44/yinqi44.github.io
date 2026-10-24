@@ -107,13 +107,35 @@
       var letter = (l.name || '?').trim().charAt(0).toUpperCase();
       var ico = document.createElement('span');
       ico.className = 'card-ico';
-      ico.textContent = letter;
+
+      /* 兜底字母：与图片分层，不再互相挤压 */
+      var letEl = document.createElement('span');
+      letEl.className = 'ico-letter';
+      letEl.textContent = letter;
+      ico.appendChild(letEl);
+
+      /* 图标源：国内可直连的高清源优先，逐级兜底 */
+      var host = hostOf(l.url);
+      var srcs = [
+        'https://icon.horse/icon/' + host,
+        'https://favicon.cccyun.cc/' + host,
+        'https://' + host + '/favicon.ico'
+      ];
       var img = document.createElement('img');
       img.alt = '';
       img.loading = 'lazy';
-      img.src = 'https://www.google.com/s2/favicons?domain=' +
-        encodeURIComponent(hostOf(l.url)) + '&sz=64';
-      img.addEventListener('error', function () { img.remove(); });
+      var idx = 0;
+      function tryNext() {
+        if (idx >= srcs.length) { img.remove(); return; }  // 全部失败 → 保留字母
+        img.src = srcs[idx++];
+      }
+      img.addEventListener('load', function () {
+        /* 有的源会返回 1x1 空白图或错误页，按真实尺寸判断 */
+        if (img.naturalWidth > 8) { ico.classList.add('has-img'); }
+        else { tryNext(); }
+      });
+      img.addEventListener('error', tryNext);
+      tryNext();
       ico.appendChild(img);
 
       var body = document.createElement('span');
