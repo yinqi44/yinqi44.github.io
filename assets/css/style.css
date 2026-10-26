@@ -96,6 +96,16 @@ ul { margin: 0; padding: 0; list-style: none; }
 .nav a:hover { color: var(--text); }
 .nav a:hover::after { transform: scaleX(1); }
 
+/* 安装应用按钮：黑底白字，醒目一点 */
+.install-btn {
+  background: var(--text); border: 1px solid var(--text); color: var(--panel);
+  height: 34px; padding: 0 14px; border-radius: 3px; cursor: pointer;
+  font-size: 12px; font-weight: 600; letter-spacing: .06em; line-height: 1; flex: none;
+  font-family: var(--sans); transition: .25s;
+}
+.install-btn:hover { opacity: .85; transform: translateY(-1px); box-shadow: var(--shadow); }
+.install-btn[hidden] { display: none; }
+
 /* 语言切换按钮 */
 .lang-btn {
   background: none; border: 1px solid var(--line); color: var(--text-2);

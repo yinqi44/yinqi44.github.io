@@ -25,9 +25,17 @@
 <link rel="alternate" hreflang="zh-CN" href="https://yinqi44.github.io/?lang=zh">
 <link rel="alternate" hreflang="en" href="https://yinqi44.github.io/?lang=en">
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+<!-- PWA：可安装为本地应用（含离线缓存） -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#141414">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="深渊王座">
+<link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32.png">
 <!-- 资源带版本号：每次改动把 v 后面的数字 +1，用户无需手动清缓存 -->
-<link rel="stylesheet" href="assets/css/style.css?v=12">
+<link rel="stylesheet" href="assets/css/style.css?v=13">
 
 <!-- 结构化数据，帮助搜索引擎识别这是个人主页 -->
 <script type="application/ld+json">
@@ -55,6 +63,7 @@
       <a href="#about" data-i18n="nav_about">关于我</a>
       <a href="#contact" data-i18n="nav_contact">联系</a>
     </nav>
+    <button class="install-btn" id="installBtn" type="button" hidden data-i18n="install_app" data-i18n-aria="install_app">安装应用</button>
     <button class="lang-btn" id="langBtn" type="button" data-i18n-aria="lang_label" aria-label="切换中文 / English">
       <span id="langTag">EN</span>
     </button>
@@ -158,7 +167,7 @@
 
 <button class="to-top" id="toTop" type="button" data-i18n-aria="aria_top" aria-label="回到顶部">↑</button>
 
-<script src="assets/js/links.js?v=12"></script>
-<script src="assets/js/app.js?v=12"></script>
+<script src="assets/js/links.js?v=13"></script>
+<script src="assets/js/app.js?v=13"></script>
 </body>
 </html>

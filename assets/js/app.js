@@ -267,6 +267,9 @@
   function setTheme(tp) {
     document.documentElement.setAttribute('data-theme', tp);
     $('#themeBtn .theme-ico').textContent = tp === 'dark' ? '☾' : '☀︎';
+    /* 手机任务栏/标题栏颜色跟随主题 */
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', tp === 'dark' ? '#191612' : '#141414');
   }
 
   /* ============ 回顶 ============ */
@@ -280,6 +283,45 @@
   toTop.addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  /* ============ PWA：安装应用 ============ */
+  var installBtn = $('#installBtn');
+  var deferredPrompt = null;
+
+  function hideInstall() {
+    installBtn.hidden = true;
+    try { localStorage.setItem('pwaInstalled', '1'); } catch (e) {}
+  }
+
+  /* 已作为应用运行（或装过）就不再显示按钮 */
+  (function () {
+    var standalone = false;
+    try {
+      standalone = window.matchMedia('(display-mode: standalone)').matches ||
+                   window.navigator.standalone === true ||
+                   localStorage.getItem('pwaInstalled') === '1';
+    } catch (e) {}
+    if (standalone) installBtn.hidden = true;
+  })();
+
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.hidden = false;
+  });
+  installBtn.addEventListener('click', function () {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(hideInstall);
+    deferredPrompt = null;
+  });
+  window.addEventListener('appinstalled', hideInstall);
+
+  /* ============ PWA：离线缓存 ============ */
+  if ('serviceWorker' in navigator &&
+      (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    navigator.serviceWorker.register('service-worker.js').catch(function () {});
+  }
 
   /* ============ 启动 ============ */
   applyLang();
