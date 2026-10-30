@@ -70,7 +70,8 @@ window.SITE_DATA = {
         { name: 'LibTV', url: 'https://www.liblib.tv', desc: { zh: 'AI 视频创作平台', en: 'AI video creation platform' } },
         { name: 'MOKE AIGC', url: 'https://www.mokeaigc.ai/skill.html', desc: { zh: 'AI Skill 市场 / 世界观构建', en: 'AI skill marketplace & world-building' } },
         { name: { zh: '阿狸画布', en: 'Ali Canvas' }, url: 'https://ai.alisama.top:23456/', desc: { zh: '在线画布', en: 'Online canvas' } },
-        { name: { zh: '灵科 AI', en: 'Lingke AI' }, url: 'https://lingkeai.ai/home', desc: { zh: 'AI 模型聚合平台', en: 'AI model hub' } }
+        { name: { zh: '灵科 AI', en: 'Lingke AI' }, url: 'https://lingkeai.ai/home', desc: { zh: 'AI 模型聚合平台', en: 'AI model hub' } },
+        { name: 'DeepSeek', url: 'https://chat.deepseek.com', desc: { zh: '国产大模型对话', en: 'Chinese LLM assistant' } }
       ]
     },
     {
@@ -84,7 +85,16 @@ window.SITE_DATA = {
       name: { zh: '影音娱乐', en: 'Media' },
       links: [
         { name: 'YouTube', url: 'https://www.youtube.com', desc: { zh: '视频', en: 'Video' } },
-        { name: { zh: '哔哩哔哩', en: 'Bilibili' }, url: 'https://www.bilibili.com', desc: { zh: '视频弹幕网站', en: 'Video & danmaku' } }
+        { name: { zh: '哔哩哔哩', en: 'Bilibili' }, url: 'https://www.bilibili.com', desc: { zh: '视频弹幕网站', en: 'Video & danmaku' } },
+        { name: { zh: '抖音', en: 'Douyin' }, url: 'https://www.douyin.com', desc: { zh: '短视频', en: 'Short video' } }
+      ]
+    },
+    {
+      name: { zh: '购物', en: 'Shopping' },
+      links: [
+        { name: { zh: '淘宝', en: 'Taobao' }, url: 'https://www.taobao.com', desc: { zh: '综合电商', en: 'Marketplace' } },
+        { name: { zh: '京东', en: 'JD.com' }, url: 'https://www.jd.com', desc: { zh: '自营电商 · 物流快', en: 'Online retail & fast delivery' } },
+        { name: { zh: '拼多多', en: 'Pinduoduo' }, url: 'https://www.pinduoduo.com', desc: { zh: '低价拼团', en: 'Group-buy deals' } }
       ]
     }
   ]
