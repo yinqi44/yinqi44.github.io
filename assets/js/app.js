@@ -179,13 +179,16 @@
       letEl.textContent = letter;
       ico.appendChild(letEl);
 
-      /* 图标：国内可直连的高清源优先，逐级兜底 */
+      /* 图标：优先用数据里手工指定的 icon（自托管，最可靠），
+         再走国内可直连的高清源，逐级兜底 */
       var host = hostOf(l.url);
-      var srcs = [
+      var srcs = [];
+      if (l.icon) srcs.push(l.icon);
+      srcs.push(
         'https://icon.horse/icon/' + host,
         'https://favicon.cccyun.cc/' + host,
         originOf(l.url) + '/favicon.ico'
-      ];
+      );
       var img = document.createElement('img');
       img.alt = '';
       img.loading = 'lazy';
